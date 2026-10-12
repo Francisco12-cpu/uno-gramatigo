@@ -140,6 +140,26 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
 .carta.verso .rosto span{font-weight:800; font-size:calc(var(--w)*.34); color:var(--amarelo); transform:rotate(-20deg); text-shadow:calc(var(--w)*.025) calc(var(--w)*.025) 0 #3a0c08; letter-spacing:-1px;}
 .tam-p{--w:26px;} .tam-m{--w:66px;} .tam-g{--w:118px;} .tam-xg{--w:min(62vw, 230px);}
 .tam-p::after{display:none;} .tam-p .rosto{display:none;}
+/* na mão (tamanho médio) o texto inteiro fica ilegível: mostra o tema em letra grande */
+.carta .tema{display:none;}
+.carta.tam-m .txt{display:none;}
+.carta.tam-m .tema{
+  display:flex; flex-direction:column; align-items:center; gap:calc(var(--w)*.035); width:86%; text-align:center;
+  font-weight:800; color:#15171c; line-height:1; font-size:calc(var(--w)*.155); letter-spacing:-.3px; overflow-wrap:anywhere;
+}
+.carta.tam-m .tema.longo{font-size:calc(var(--w)*.125); letter-spacing:-.4px;}
+.carta .tema i{
+  font-style:normal; width:calc(var(--w)*.19); height:calc(var(--w)*.19); border-radius:50%; background:#15171c; color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:calc(var(--w)*.115);
+}
+/* modo daltônico: um símbolo diferente para cada cor */
+.carta .simb{display:none;}
+.daltonico .carta .simb{
+  display:block; position:absolute; z-index:3; right:calc(var(--w)*.1); top:calc(var(--w)*.07); font-size:calc(var(--w)*.17); line-height:1;
+  color:#fff; -webkit-text-stroke:calc(var(--w)*.01) #1a1a1a; text-shadow:calc(var(--w)*.012) calc(var(--w)*.012) 0 #1a1a1a;
+}
+.daltonico .tam-p .simb{display:none;}
+.c-amarelo .simb::before{content:'▲';} .c-azul .simb::before{content:'■';} .c-verde .simb::before{content:'◆';} .c-vermelho .simb::before{content:'●';}
 
 /* ---------------- jogo ---------------- */
 #tela-jogo{padding:calc(var(--safe-t) + 8px) 0 calc(var(--safe-b) + 8px); overflow:hidden;}
@@ -266,6 +286,9 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
 .roda button:active{filter:brightness(1.2);}
 .roda .q1{left:0; top:0; background:var(--vermelho);} .roda .q2{right:0; top:0; background:var(--azul);}
 .roda .q3{left:0; bottom:0; background:var(--amarelo);} .roda .q4{right:0; bottom:0; background:var(--verde);}
+.roda button{display:flex; align-items:center; justify-content:center;}
+.daltonico .roda button::after{transform:rotate(45deg); font-size:2.6rem; color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.45);}
+.daltonico .roda .q1::after{content:'●';} .daltonico .roda .q2::after{content:'■';} .daltonico .roda .q3::after{content:'▲';} .daltonico .roda .q4::after{content:'◆';}
 .escolha-cor h3{position:absolute; top:calc(var(--safe-t) + 22%); width:100%; text-align:center; margin:0; font-size:1.4rem;}
 
 /* vitória */
@@ -276,6 +299,39 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
 .vitoria h2{margin:0; font-size:2.2rem; text-align:center; line-height:1;}
 .vitoria .nota{margin-bottom:14px; text-align:center;}
 .vitoria .pilha-btns{width:100%; max-width:320px;}
+.placar{width:100%; max-width:320px; display:flex; flex-direction:column; gap:6px; margin:0 0 16px; padding:0; list-style:none;}
+.placar li{display:flex; align-items:center; gap:10px; background:rgba(0,0,0,.28); border-radius:12px; padding:7px 12px; font-weight:700;}
+.placar li .pos{width:22px; text-align:center; color:var(--giz-2);}
+.placar li .avatar{width:26px; height:26px; border-radius:50%; background:var(--av); display:flex; align-items:center; justify-content:center; font-size:.85rem; color:#fff; flex:none;}
+.placar li .qtd{margin-left:auto; font-size:.85rem; color:var(--giz-2);}
+.placar li.ganhou{box-shadow:inset 0 0 0 2px var(--amarelo);}
+
+/* diálogo de confirmação */
+.dialogo{position:fixed; inset:0; z-index:70; display:none; align-items:center; justify-content:center; padding:24px; background:rgba(6,16,13,.72);}
+.dialogo.on{display:flex; animation:fade .2s both;}
+.dialogo-caixa{width:100%; max-width:340px; background:linear-gradient(180deg,#1d463b,#123128); border-radius:22px; padding:20px 18px 18px; box-shadow:0 0 0 2px var(--giz-3), 0 20px 50px rgba(0,0,0,.55); animation:zoom-in .26s cubic-bezier(.2,1.2,.4,1) both;}
+.dialogo-caixa h3{margin:0 0 16px; text-align:center; font-size:1.3rem;}
+.dialogo-caixa .linha{display:flex; gap:10px;}
+.dialogo-caixa .linha .btn{padding:12px; font-size:1rem;}
+
+/* destaque da sua vez */
+.zona-mao::before{content:''; position:absolute; left:8%; right:8%; bottom:6px; height:60%; border-radius:50%; background:radial-gradient(ellipse at 50% 100%, rgba(255,204,26,.28), transparent 70%); opacity:0; transition:opacity .4s; pointer-events:none;}
+.zona-mao.minha-vez::before{opacity:1;}
+.painel.recarga .carta{animation:none;}
+
+/* tutorial */
+.tuto{position:fixed; inset:0; z-index:65; display:none;}
+.tuto.on{display:block; animation:fade .3s both;}
+.tuto-luz{position:fixed; border-radius:20px; box-shadow:0 0 0 3px var(--amarelo), 0 0 22px 6px rgba(255,204,26,.45), 0 0 0 200vmax rgba(4,12,10,.74); transition:left .35s ease, top .35s ease, width .35s ease, height .35s ease; pointer-events:none;}
+.tuto-balao{position:fixed; left:50%; width:min(92vw, 380px); transform:translateX(-50%); background:var(--giz); color:#14261f; border-radius:20px; padding:16px; box-shadow:0 18px 40px rgba(0,0,0,.5);}
+.tuto-balao.entra{animation:balao-in .3s cubic-bezier(.2,1.2,.4,1) both;}
+@keyframes balao-in{from{opacity:0; transform:translateX(-50%) scale(.9);}}
+.tuto-txt{font-size:1.05rem; line-height:1.4; font-weight:600;}
+.tuto-txt b{font-weight:800;}
+.tuto-rodape{display:flex; align-items:center; gap:8px; margin-top:14px;}
+.tuto-rodape span{margin-right:auto; font-weight:700; color:rgba(20,38,31,.55); font-size:.9rem;}
+.tuto-rodape .btn{width:auto; padding:10px 16px; font-size:.98rem;}
+.tuto-rodape .btn.lousa{color:#14261f; background:rgba(20,38,31,.08); box-shadow:inset 0 0 0 2px rgba(20,38,31,.2);}
 
 /* efeitos */
 #fx{position:fixed; inset:0; z-index:50; pointer-events:none; overflow:hidden;}
@@ -331,8 +387,51 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
 .par-item .q, .par-item .r{display:flex; gap:8px; align-items:flex-start; font-size:.93rem; line-height:1.3; margin-top:4px;}
 .par-item .marca{flex:none; font-size:.72rem; font-weight:800; padding:2px 7px; border-radius:8px; color:#fff; margin-top:2px;}
 
+/* histórico da partida */
+.historico{position:fixed; inset:0; z-index:38; display:none; background:rgba(6,16,13,.5);}
+.historico.on{display:block; animation:fade .2s both;}
+.historico-caixa{position:absolute; right:0; top:0; bottom:0; width:min(86vw, 350px); display:flex; flex-direction:column; background:linear-gradient(180deg,#173a32,#0f2923); box-shadow:-10px 0 30px rgba(0,0,0,.5); padding:calc(var(--safe-t) + 14px) 14px calc(var(--safe-b) + 14px); animation:entra-dir .28s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes entra-dir{from{transform:translateX(100%);}}
+.historico-caixa .cabeca{margin-bottom:12px;}
+.historico-caixa .cabeca h2{flex:1; font-size:1.3rem;}
+.historico ol{list-style:none; margin:0; padding:0; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:6px;}
+.historico li{display:flex; gap:9px; align-items:flex-start; background:rgba(0,0,0,.22); border-radius:12px; padding:8px 10px; font-weight:600; font-size:.92rem; line-height:1.3;}
+.historico li .ponto{flex:none; width:10px; height:10px; border-radius:50%; margin-top:5px; background:var(--giz-3);}
+.historico li.eu{box-shadow:inset 3px 0 0 var(--amarelo);}
+.historico li.vazio{background:none; justify-content:center; color:var(--giz-2);}
+
+/* estudo (flashcards) */
+.temas{display:flex; gap:8px; overflow-x:auto; margin:0 -18px 12px; padding:0 18px 6px; scrollbar-width:none;}
+.temas::-webkit-scrollbar{display:none;}
+.temas button{flex:none; border:none; border-radius:20px; padding:7px 13px; background:rgba(0,0,0,.25); font-weight:700; font-size:.9rem; color:var(--giz-2);}
+.temas button.on{background:var(--giz); color:var(--lousa-2);}
+.progresso .linha-txt{display:flex; justify-content:space-between; gap:10px; font-weight:700; font-size:.9rem; color:var(--giz-2); margin-bottom:6px;}
+.progresso .barra{height:10px; border-radius:6px; background:rgba(0,0,0,.3); overflow:hidden;}
+.progresso .barra i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--verde),#6fe09b); border-radius:6px; transition:width .5s ease;}
+.flash{flex:1; min-height:300px; display:flex; align-items:center; justify-content:center; perspective:1100px; cursor:pointer; outline:none;}
+.flash-giro{--w:min(62vw, 230px); position:relative; width:var(--w); height:calc(var(--w) * 1.46); transform-style:preserve-3d; transition:transform .55s cubic-bezier(.3,.9,.3,1);}
+.flash.virada .flash-giro{transform:rotateY(180deg);}
+.flash-giro .carta{position:absolute; left:0; top:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;}
+.flash-giro .carta.tras{transform:rotateY(180deg);}
+.flash-giro.troca{animation:troca .35s cubic-bezier(.2,1.2,.4,1);}
+@keyframes troca{from{opacity:0; transform:translateX(50px) rotate(5deg);}}
+.estudo-info{text-align:center; font-family:var(--giz-fonte); font-size:1.3rem; color:var(--giz-2); min-height:1.4em; margin:8px 0 12px;}
+.btn.verde{background:var(--verde); color:#fff; box-shadow:0 5px 0 #13693a, 0 10px 22px rgba(0,0,0,.28);}
+
+/* estatísticas */
+.blocos-num{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;}
+.num-box{background:rgba(0,0,0,.22); border-radius:16px; padding:12px 8px; text-align:center;}
+.num-box b{display:block; font-size:2rem; line-height:1.05; color:var(--amarelo);}
+.num-box span{font-size:.85rem; color:var(--giz-2); font-weight:700;}
+.linha-stat{display:flex; justify-content:space-between; gap:10px; color:var(--giz-2); font-size:.95rem; padding:5px 0; border-bottom:1px dashed rgba(238,242,230,.1);}
+.linha-stat:last-child{border-bottom:none;}
+.linha-stat b{color:var(--giz); text-align:right;}
+.vitoria .resumo, .vitoria .nota{text-shadow:0 2px 8px rgba(0,0,0,.9);}
+.vitoria .resumo{font-weight:700; color:var(--giz); margin:-8px 0 12px; text-align:center;}
+
+@media (max-height:760px){ .hero{height:270px;} }
 @media (min-height:760px){ .assentos{height:128px;} .zona-mao{height:172px;} .flutuantes{bottom:180px;} }
-@media (max-width:360px){ .tam-m{--w:58px;} .tam-g{--w:104px;} .descarte{width:104px; height:152px;} .monte{width:66px; height:96px;} .monte .carta{--w:66px;} .titulo h1{font-size:2.6rem;} }
+@media (max-width:360px){ #chip-modo{display:none;} .tam-m{--w:58px;} .tam-g{--w:104px;} .descarte{width:104px; height:152px;} .monte{width:66px; height:96px;} .monte .carta{--w:66px;} .titulo h1{font-size:2.6rem;} }
 @media (min-width:700px){ .tam-m{--w:78px;} .tam-g{--w:136px;} .descarte{width:136px; height:199px;} .zona-mao{height:190px;} .flutuantes{bottom:200px;} }
 @media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;} }
 </style>
@@ -356,8 +455,16 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
       <button class="btn lousa" data-ir="tela-mesa">Conferir cartas físicas</button>
     </div>
     <div class="linha-mini">
+      <button class="btn lousa" data-ir="tela-estudo">Estudar</button>
+      <button class="btn lousa" data-ir="tela-stats">Estatísticas</button>
+    </div>
+    <div class="linha-mini">
       <button class="btn lousa" data-ir="tela-regras">Regras</button>
+      <button class="btn lousa" id="btn-tutorial">Tutorial</button>
+    </div>
+    <div class="linha-mini">
       <button class="btn lousa" id="btn-som-menu">Som: ligado</button>
+      <button class="btn lousa" id="btn-daltonico">Daltônico: desligado</button>
     </div>
     <button class="btn lousa" id="btn-instalar" style="display:none; margin-top:12px;">Instalar no celular</button>
     <div class="credito">criado por <b>Francisco Audir</b></div>
@@ -433,6 +540,7 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
     <span class="chip"><span class="bola"></span><span id="chip-cor">azul</span></span>
     <span class="chip" id="chip-modo">Gramática</span>
     <span class="espaco"></span>
+    <button class="icone-btn" id="btn-historico" aria-label="Últimas jogadas">📜</button>
     <button class="icone-btn" id="btn-som-jogo" aria-label="Ligar ou desligar som">🔊</button>
   </div>
   <div class="arena" id="arena">
@@ -499,6 +607,26 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
 </section>
 
 <!-- ======================= MESA (cartas físicas) ======================= -->
+<section class="tela" id="tela-estudo">
+  <div class="miolo-tela">
+    <div class="cabeca"><button class="voltar" data-ir="tela-menu" aria-label="Voltar">←</button><h2>Estudar as cartas</h2></div>
+    <div class="temas" id="estudo-temas" role="group" aria-label="Tema"></div>
+    <div class="progresso"><div class="linha-txt"><span id="estudo-prog"></span><span id="estudo-placar"></span></div><div class="barra"><i id="estudo-barra"></i></div></div>
+    <div class="flash" id="flash" role="button" tabindex="0" aria-label="Virar carta"><div class="flash-giro" id="flash-giro"></div></div>
+    <div class="estudo-info" id="estudo-info"></div>
+    <div id="estudo-antes"><button class="btn" id="btn-virar">Virar carta</button></div>
+    <div class="linha-mini" id="estudo-depois" style="display:none; margin-top:0;"><button class="btn vermelho" id="btn-errei">Errei</button><button class="btn verde" id="btn-acertei">Acertei</button></div>
+  </div>
+</section>
+
+<section class="tela" id="tela-stats">
+  <div class="miolo-tela">
+    <div class="cabeca"><button class="voltar" data-ir="tela-menu" aria-label="Voltar">←</button><h2>Estatísticas</h2></div>
+    <div id="stats-conteudo"></div>
+    <button class="btn lousa" id="btn-zerar-stats" style="margin-top:6px;">Zerar estatísticas</button>
+  </div>
+</section>
+
 <section class="tela" id="tela-mesa">
   <div class="miolo-tela">
     <div class="cabeca"><button class="voltar" data-ir="tela-menu" aria-label="Voltar">←</button><h2>Cartas físicas</h2></div>
@@ -523,9 +651,19 @@ p.texto{color:var(--giz-2); font-size:.98rem; line-height:1.45; margin:0 0 14px;
   <div class="roda"><button class="q1" data-cor="vermelho" aria-label="Vermelho"></button><button class="q2" data-cor="azul" aria-label="Azul"></button><button class="q3" data-cor="amarelo" aria-label="Amarelo"></button><button class="q4" data-cor="verde" aria-label="Verde"></button></div>
 </div>
 <div class="vitoria" id="vitoria"></div>
+<div class="dialogo" id="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo"><div class="dialogo-caixa"><h3 id="dialogo-titulo"></h3><div class="linha"><button class="btn lousa" id="dialogo-nao">Cancelar</button><button class="btn vermelho" id="dialogo-sim">Sim</button></div></div></div>
 <canvas id="confete"></canvas>
 <div id="fx"></div>
-<div class="avisos" id="avisos" aria-live="assertive"></div>
+<div class="historico" id="historico"><div class="historico-caixa" role="dialog" aria-label="Últimas jogadas">
+  <div class="cabeca"><h2>Últimas jogadas</h2><button class="voltar" id="historico-fechar" aria-label="Fechar">✕</button></div>
+  <ol id="historico-lista"></ol>
+</div></div>
+<div class="tuto" id="tuto"><div class="tuto-luz" id="tuto-luz"></div>
+  <div class="tuto-balao" id="tuto-balao" role="dialog" aria-live="polite"><div class="tuto-txt" id="tuto-txt"></div>
+    <div class="tuto-rodape"><span id="tuto-passo"></span><button class="btn lousa" id="tuto-pular">Pular</button><button class="btn" id="tuto-prox">Próximo</button></div>
+  </div>
+</div>
+<div class="avisos" id="avisos" aria-live="polite"></div>
 
 <script>
 /* =====================================================================
@@ -1229,8 +1367,13 @@ const Som = {
   ruido(dur, freq, vol, quando){
     const c = this.ctx; if(!c) return;
     const t = c.currentTime + (quando || 0);
-    const buf = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate);
-    const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+    // o ruído de cada duração é gerado uma vez só e reaproveitado
+    this.buffers = this.buffers || {};
+    let buf = this.buffers[dur];
+    if(!buf){
+      buf = this.buffers[dur] = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate);
+      const d = buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+    }
     const s = c.createBufferSource(); s.buffer = buf;
     const f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq || 1800; f.Q.value = .8;
     const g = c.createGain(); g.gain.value = vol || .25;
@@ -1266,15 +1409,28 @@ function alternarSom(){ Som.ligado = !Som.ligado; Pref.gravar('som', Som.ligado)
 $('#btn-som-menu').onclick = alternarSom; $('#btn-som-jogo').onclick = alternarSom;
 atualizarBotoesSom();
 
+/* ---------------- modo daltônico ---------------- */
+const SIMB = { amarelo:'▲', azul:'■', verde:'◆', vermelho:'●' };
+let daltonico = Pref.ler('daltonico', false);
+function aplicarDaltonico(){
+  document.body.classList.toggle('daltonico', daltonico);
+  $('#btn-daltonico').textContent = 'Daltônico: ' + (daltonico ? 'ligado' : 'desligado');
+}
+$('#btn-daltonico').onclick = () => { daltonico = !daltonico; Pref.gravar('daltonico', daltonico); aplicarDaltonico(); Som.tocar('clique'); };
+aplicarDaltonico();
+
 /* ---------------- fundo: lousa com giz ---------------- */
 (function fundo(){
   const cv = $('#fundo'), ctx = cv.getContext && cv.getContext('2d');
   if(!ctx) return;
   const palavras = ['substantivo','adjetivo','verbo','pronome','advérbio','artigo','numeral','preposição','conjunção','interjeição','sujeito','predicado','crase','vírgula'];
-  let W, H, dpr, itens = [], poeira = [], ultimo = 0, ativo = true, calmo = 1;
+  let W, H, dpr, itens = [], poeira = [], ultimo = 0, ativo = true, calmo = 1, gradiente = null, sujo = true;
   function tamanho(){
     dpr = Math.min(2, window.devicePixelRatio || 1);
     W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    gradiente = ctx.createRadialGradient(W*.5, H*.35, 0, W*.5, H*.45, Math.max(W,H)*.8);
+    gradiente.addColorStop(0, '#1d4439'); gradiente.addColorStop(.6, '#143229'); gradiente.addColorStop(1, '#0a1d19');
+    sujo = true;
     const qtd = Math.round(Math.max(8, Math.min(18, W * H / 38000)));
     itens = Array.from({length:qtd}, (_, i) => novo(true, i));
     poeira = Array.from({length:40}, () => ({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.6+.3, v:Math.random()*.15+.03, a:Math.random()*.25+.05 }));
@@ -1287,10 +1443,11 @@ atualizarBotoesSom();
   function desenhar(t){
     requestAnimationFrame(desenhar);
     if(!ativo || t - ultimo < 33) return;
+    // com movimento reduzido nada se mexe: só redesenha quando algo mudou
+    if(reduzido && !sujo) return;
+    sujo = false;
     const dt = Math.min(60, t - ultimo) / 16.7; ultimo = t;
-    const g = ctx.createRadialGradient(W*.5, H*.35, 0, W*.5, H*.45, Math.max(W,H)*.8);
-    g.addColorStop(0, '#1d4439'); g.addColorStop(.6, '#143229'); g.addColorStop(1, '#0a1d19');
-    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = gradiente; ctx.fillRect(0,0,W,H);
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for(const p of itens){
       if(!reduzido){ p.y -= p.v * dt * calmo; p.rot += p.dr * dt; }
@@ -1308,7 +1465,8 @@ atualizarBotoesSom();
   }
   addEventListener('resize', tamanho);
   document.addEventListener('visibilitychange', () => { ativo = !document.hidden; });
-  window.__fundoCalmo = v => { calmo = v; };
+  window.__fundoCalmo = v => { calmo = v; sujo = true; };
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { sujo = true; });
   tamanho(); requestAnimationFrame(desenhar);
 })();
 
@@ -1330,11 +1488,14 @@ function criarCarta(c, tam, verso){
   let rosto, canto;
   if(c.tipo === 'numero'){
     canto = String(c.numero);
-    rosto = c.texto ? '<p class="txt ' + nivelTexto(c.texto) + '">' + esc(c.texto) + '</p>' : '<b class="num">' + c.numero + '</b>';
+    rosto = c.texto ? '<p class="txt ' + nivelTexto(c.texto) + '">' + esc(c.texto) + '</p>' +
+      (c.topico ? '<span class="tema' + (c.topico.length > 9 ? ' longo' : '') + '"><i>' + (c.papel === 'pergunta' ? 'P' : 'R') + '</i>' + esc(c.topico) + '</span>' : '')
+      : '<b class="num">' + c.numero + '</b>';
   } else {
     canto = CANTO[c.tipo]; rosto = '<span class="ico">' + ICONE[c.tipo] + '</span>';
   }
-  d.innerHTML = '<span class="canto a">' + canto + '</span><div class="rosto">' + rosto + '</div><span class="canto b">' + canto + '</span>';
+  d.innerHTML = '<span class="canto a">' + canto + '</span><div class="rosto">' + rosto + '</div><span class="canto b">' + canto + '</span>' +
+    (c.cor !== 'preto' ? '<span class="simb" aria-hidden="true"></span>' : '');
   d.setAttribute('aria-label', descreverCarta(c));
   return d;
 }
@@ -1343,6 +1504,11 @@ function descreverCarta(c){
   const cor = c.cor === 'preto' ? '' : ' ' + NOME_COR[c.cor];
   if(c.tipo === 'numero') return (c.texto ? (c.papel === 'pergunta' ? 'Pergunta' : 'Resposta') + ' ' : 'Número ') + c.numero + cor + (c.texto ? ': ' + c.texto : '');
   return ({pula:'Pula', reverso:'Reverso', mais2:'+2', mais4:'Coringa +4', coringa:'Coringa'})[c.tipo] + cor;
+}
+// nome para o histórico: nas cartas de pergunta/resposta inclui o tema
+function nomeLongo(c){
+  if(c.texto) return (c.papel === 'pergunta' ? 'a pergunta ' : 'a resposta ') + c.numero + ' ' + NOME_COR[c.cor] + ' (' + c.topico + ')';
+  return nomeCurto(c);
 }
 function nomeCurto(c){
   if(c.tipo === 'numero') return c.numero + ' ' + NOME_COR[c.cor];
@@ -1358,22 +1524,47 @@ function nomeCurto(c){
 
 /* ---------------- navegação ---------------- */
 let telaAtual = 'tela-menu';
+const aoEntrar = {};   // tela -> função chamada ao abrir (preenchida mais abaixo)
 function ir(id){
   if(!document.getElementById(id)) return;
   $$('.tela').forEach(t => t.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
   telaAtual = id;
   window.__fundoCalmo && window.__fundoCalmo(id === 'tela-jogo' ? .55 : 1);
+  if(aoEntrar[id]) aoEntrar[id]();
 }
 $$('[data-ir]').forEach(b => b.addEventListener('click', () => { Som.tocar('clique'); ir(b.dataset.ir); }));
 function segmento(grupo, aoMudar){
   const box = document.querySelector('[data-grupo="' + grupo + '"]');
+  const marcar = b => box.querySelectorAll('button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); });
+  box.setAttribute('role', 'group');
+  marcar(box.querySelector('button.on'));
   box.addEventListener('click', e => {
     const b = e.target.closest('button'); if(!b) return;
-    box.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    marcar(b);
     Som.tocar('clique'); aoMudar && aoMudar(b.dataset.v);
   });
-  return () => box.querySelector('button.on').dataset.v;
+  const ler = () => box.querySelector('button.on').dataset.v;
+  // permite restaurar a escolha salva
+  ler.definir = v => { const b = box.querySelector('button[data-v="' + v + '"]'); if(b){ marcar(b); aoMudar && aoMudar(v); } };
+  return ler;
+}
+
+/* ---------------- diálogo de confirmação (no lugar do confirm do navegador) ---------------- */
+function confirmar(titulo, sim){
+  return new Promise(ok => {
+    const box = $('#dialogo');
+    $('#dialogo-titulo').textContent = titulo;
+    $('#dialogo-sim').textContent = sim || 'Sim';
+    const fim = r => { box.classList.remove('on'); document.removeEventListener('keydown', tecla); Som.tocar('clique'); ok(r); };
+    const tecla = e => { if(e.key === 'Escape') fim(false); };
+    $('#dialogo-sim').onclick = () => fim(true);
+    $('#dialogo-nao').onclick = () => fim(false);
+    box.onclick = e => { if(e.target === box) fim(false); };
+    document.addEventListener('keydown', tecla);
+    box.classList.add('on');
+    $('#dialogo-nao').focus();
+  });
 }
 
 /* ---------------- avisos ---------------- */
@@ -1396,17 +1587,26 @@ const agora = () => performance.now();
 class SessaoLocal {
   constructor(cfg){
     this.cfg = cfg; this.partida = 0; this.eu = 0;
+    // relógio próprio da partida: enquanto pausado (tutorial, app em segundo plano) o tempo não anda
+    this.desconto = 0; this.pausaDesde = null; this.pausas = new Set();
     this.novaPartida();
     this.relogio = setInterval(() => this.tick(), 100);
   }
+  tempo(){ return (this.pausaDesde != null ? this.pausaDesde : agora()) - this.desconto; }
+  pausar(motivo){ this.pausas.add(motivo); if(this.pausaDesde == null) this.pausaDesde = agora(); }
+  retomar(motivo){
+    this.pausas.delete(motivo);
+    if(this.pausas.size || this.pausaDesde == null) return;
+    this.desconto += agora() - this.pausaDesde; this.pausaDesde = null; this.tick();
+  }
   criarJogo(){
     return new Game({ modo:this.cfg.modo, jogadores:this.cfg.jogadores, tempoContestacao:this.cfg.tempoContestacao,
-      ritmoBots:this.cfg.ritmo, agora:agora() });
+      ritmoBots:this.cfg.ritmo, agora:this.tempo() });
   }
   novaPartida(){ this.partida++; this.g = this.criarJogo(); this.versaoVista = -1; this.tick(); }
   tick(){
     if(!this.g) return;
-    try{ this.g.update(agora()); }catch(e){ console.error(e); }
+    if(this.pausaDesde == null) try{ this.g.update(this.tempo()); }catch(e){ console.error(e); }
     if(this.g.versao !== this.versaoVista){ this.versaoVista = this.g.versao; this.publicar(); }
   }
   publicar(){ Mesa.render(this.g.vista(this.eu), this.partida); }
@@ -1468,7 +1668,7 @@ const Mesa = {
   render(v, partida){
     const novoJogo = partida !== this.partida;
     if(novoJogo){
-      this.partida = partida; this.ultimoSeq = 0; this.sel = null; this.contestId = null; this.contestOculta = null;
+      this.partida = partida; this.ultimoSeq = 0; this.sel = null; this.contestId = null; this.contestOculta = null; this.log = [];
       this.fecharPainel(); $('#vitoria').classList.remove('on'); $('#escolha-cor').classList.remove('on'); pararConfete();
     }
     const antes = this.medir();
@@ -1476,9 +1676,13 @@ const Mesa = {
     this.v = v;
     const novos = v.eventos.filter(e => e.seq > this.ultimoSeq);
     if(v.eventos.length) this.ultimoSeq = Math.max(this.ultimoSeq, v.eventos[v.eventos.length - 1].seq);
+    novos.forEach(ev => { const l = this.textoEvento(ev, v); if(l) this.log.push(l); });
+    if(this.log.length > 80) this.log.splice(0, this.log.length - 80);
+    if(novos.length && $('#historico').classList.contains('on')) this.desenharHistorico();
+    Stats.registrar(novos, v, this.sessao);
 
     document.documentElement.style.setProperty('--cor-ativa', HEX[v.cor]);
-    $('#chip-cor').textContent = NOME_COR[v.cor];
+    $('#chip-cor').textContent = (daltonico ? SIMB[v.cor] + ' ' : '') + NOME_COR[v.cor];
     $('#chip-modo').textContent = v.modo === 'gramatica' ? 'Gramática' : 'Clássico';
     this.desenharAssentos(v);
     this.desenharCentro(v);
@@ -1490,7 +1694,45 @@ const Mesa = {
     this.animar(novos, antes, novoJogo);
     if(anterior && v.fase === 'jogar' && v.vez === v.eu && (anterior.vez !== v.eu || anterior.fase !== 'jogar')){ Som.tocar('vez'); vibrar(25); }
     if(v.fase === 'fim' && (!anterior || anterior.fase !== 'fim')) setTimeout(() => this.mostrarVitoria(), 650);
+    if(!Tutorial.ativo) Dicas.checar(v);
   },
+
+  /* ---------- histórico ---------- */
+  log:[],
+  textoEvento(ev, v){
+    const N = j => this.nome(j), de = j => this.nomeDe(j);
+    let t = null, cor = null;
+    switch(ev.tipo){
+      case 'inicio': t = 'A partida começou com ' + nomeLongo(ev.topo) + ' na mesa'; cor = ev.topo.cor; break;
+      case 'jogou':
+        t = N(ev.j) + ' jogou ' + nomeLongo(ev.carta) + (ev.carta.cor === 'preto' ? ' e escolheu ' + NOME_COR[ev.cor] : '') + (ev.bonus ? ' (bônus)' : '');
+        cor = ev.cor; break;
+      case 'relampago': t = '⚡ ' + N(ev.j) + ' soltou Relâmpago: ' + nomeLongo(ev.carta); cor = ev.carta.cor; break;
+      case 'compra':
+        if(!ev.qtd) break;
+        t = N(ev.j) + ' comprou ' + (ev.qtd === 1 ? '1 carta' : ev.qtd + ' cartas') +
+          ({ mais2:' (+2)', mais4:' (+4)', esqueceuUno:' por esquecer o UNO', contestacao:' na contestação' }[ev.motivo] || '');
+        break;
+      case 'uno': t = N(ev.j) + ' gritou UNO!' + (ev.atrasado ? ' (atrasado)' : ''); break;
+      case 'pegou': t = N(ev.j) + ' pegou ' + de(ev.alvo) + ' sem UNO'; break;
+      case 'pulou': t = N(ev.j) + ' perdeu a vez'; break;
+      case 'inverteu': t = 'O sentido do jogo inverteu'; break;
+      case 'passou': t = N(ev.j) + ' passou a vez'; break;
+      case 'reembaralhar': t = 'O monte foi reembaralhado'; break;
+      case 'contestou': t = N(ev.j) + ' contestou e ' + (ev.acusadorCerto ? 'acertou: não era o par' : 'errou: era o par'); break;
+      case 'semContestacao': t = 'Ninguém contestou: a Relâmpago de ' + de(ev.j) + ' valeu'; break;
+      case 'bonusPulado': t = N(ev.j) + ' pulou a carta bônus'; break;
+      case 'vitoria': t = '🏆 ' + N(ev.j) + ' venceu!'; break;
+    }
+    return t && { t, cor, eu: ev.j === v.eu };
+  },
+  desenharHistorico(){
+    $('#historico-lista').innerHTML = this.log.length
+      ? this.log.slice().reverse().map(l => '<li class="' + (l.eu ? 'eu' : '') + '"><span class="ponto"' + (l.cor ? ' style="background:' + HEX[l.cor] + '"' : '') + '></span><span>' + esc(l.t) + '</span></li>').join('')
+      : '<li class="vazio">Nada aconteceu ainda.</li>';
+  },
+  abrirHistorico(){ Som.tocar('clique'); this.fecharPainel(); this.desenharHistorico(); $('#historico').classList.add('on'); $('#historico-fechar').focus(); },
+  fecharHistorico(){ $('#historico').classList.remove('on'); },
 
   medir(){
     const r = { mao:{}, assento:{}, monte:null, descarte:null };
@@ -1603,6 +1845,7 @@ const Mesa = {
     const meuBonus = v.fase === 'bonus' && v.bonus && v.bonus.j === v.eu;
     const bc = $('#btn-comprar'), bp = $('#btn-passar'), bb = $('#btn-pular-bonus');
     bc.style.display = meuBonus ? 'none' : ''; bp.style.display = meuBonus ? 'none' : ''; bb.style.display = meuBonus ? '' : 'none';
+    document.querySelector('.zona-mao').classList.toggle('minha-vez', minhaVez || meuBonus);
     bc.disabled = !(minhaVez && !v.comprou);
     bp.disabled = !(minhaVez && v.comprou);
     const nMao = v.mao.length;
@@ -1705,10 +1948,11 @@ const Mesa = {
     const z = document.querySelector('.zona-mao').getBoundingClientRect();
     $('#painel').style.setProperty('--painel-b', Math.max(120, innerHeight - z.top + 84) + 'px');
   },
-  abrirPainel(c){
+  abrirPainel(c, recarga){
     this.painelCarta = c; this.painelTopo = false;
     this.posicionarPainel();
     const p = $('#painel'); p.innerHTML = '';
+    p.classList.toggle('recarga', !!recarga);
     p.append(criarCarta(c, 'xg'));
     const acoes = this.acoesDaCarta(c);
     const box = document.createElement('div'); box.className = 'acoes';
@@ -1732,13 +1976,14 @@ const Mesa = {
     box.append(f); p.append(box);
     p.classList.add('on');
   },
-  abrirTopo(){
+  abrirTopo(recarga){
     const v = this.v; if(!v) return;
-    Som.tocar('clique');
+    if(!recarga) Som.tocar('clique');
     this.sel = null; this.painelCarta = null; this.painelTopo = true;
     $$('#mao-trilho .na-mao').forEach(e => e.classList.remove('sel'));
     this.posicionarPainel();
     const p = $('#painel'); p.innerHTML = '';
+    p.classList.toggle('recarga', !!recarga);
     p.append(criarCarta(v.topo, 'xg'));
     const box = document.createElement('div'); box.className = 'acoes';
     const l = document.createElement('div'); l.className = 'legenda';
@@ -1754,11 +1999,11 @@ const Mesa = {
     if(this.sel != null){ this.sel = null; $$('#mao-trilho .na-mao').forEach(e => e.classList.remove('sel')); }
   },
   atualizarPainel(v){
-    if(this.painelTopo){ this.abrirTopo(); return; }
+    if(this.painelTopo){ if(v.fase === 'contestacao' || v.fase === 'fim') this.fecharPainel(); else this.abrirTopo(true); return; }
     if(!this.painelCarta) return;
     const aind = v.mao.find(c => c.id === this.painelCarta.id);
     if(!aind || v.fase === 'contestacao' || v.fase === 'fim'){ this.fecharPainel(); return; }
-    this.abrirPainel(aind);
+    this.abrirPainel(aind, true);
     const e = document.querySelector('#mao-trilho .na-mao[data-id="' + aind.id + '"]');
     if(e) e.classList.add('sel');
   },
@@ -1915,6 +2160,11 @@ const Mesa = {
     const podeReiniciar = this.sessao && this.sessao.podeReiniciar();
     box.innerHTML = '<div class="trofeu">' + (venci ? '🏆' : '🎴') + '</div><h2>' + (venci ? 'Você venceu!' : esc(v.nomes[v.vencedor]) + ' venceu') + '</h2>' +
       '<div class="nota">' + (venci ? 'mandou bem na gramática' : 'a próxima é sua') + '</div>' +
+      '<div class="resumo">' + Stats.d.vitorias + ' ' + (Stats.d.vitorias === 1 ? 'vitória' : 'vitórias') + ' em ' + Stats.d.partidas + ' ' + (Stats.d.partidas === 1 ? 'partida' : 'partidas') +
+        (Stats.d.seq > 1 ? ' · ' + Stats.d.seq + ' seguidas! 🔥' : '') + '</div>' +
+      '<ol class="placar">' + v.nomes.map((n, j) => j).sort((a, b) => v.qtds[a] - v.qtds[b]).map((j, k) =>
+        '<li class="' + (j === v.vencedor ? 'ganhou' : '') + '" style="--av:' + AVATARES[j % AVATARES.length] + '"><span class="pos">' + (k + 1) + 'º</span><span class="avatar">' + esc(v.nomes[j].charAt(0).toUpperCase()) + '</span>' +
+        esc(j === v.eu ? 'Você' : v.nomes[j]) + '<span class="qtd">' + (v.qtds[j] === 0 ? 'sem cartas' : v.qtds[j] + (v.qtds[j] === 1 ? ' carta' : ' cartas')) + '</span></li>').join('') + '</ol>' +
       '<div class="pilha-btns">' + (podeReiniciar ? '<button class="btn" id="vit-denovo">Jogar de novo</button>' : '<p class="texto" style="text-align:center;">Esperando quem criou a sala começar outra.</p>') +
       '<button class="btn lousa" id="vit-menu">Voltar ao menu</button></div>';
     box.classList.add('on');
@@ -1932,8 +2182,21 @@ $('#btn-pular-bonus').onclick = () => { Mesa.fecharPainel(); Mesa.sessao.agir({ 
 $('#btn-uno').onclick = () => { Mesa.sessao.agir({ tipo:'uno' }); };
 $('#btn-pegar').onclick = () => { Mesa.sessao.agir({ tipo:'pegar' }); };
 $('#painel').addEventListener('click', e => { if(e.target.id === 'painel') Mesa.fecharPainel(); });
-$('#jogo-sair').onclick = () => { if(Mesa.v && Mesa.v.fase !== 'fim' && !confirm('Sair da partida?')) return; sairDoJogo(); };
+$('#btn-historico').onclick = () => Mesa.abrirHistorico();
+$('#historico-fechar').onclick = () => Mesa.fecharHistorico();
+$('#historico').addEventListener('click', e => { if(e.target.id === 'historico') Mesa.fecharHistorico(); });
+$('#jogo-sair').onclick = async () => { if(Mesa.v && Mesa.v.fase !== 'fim' && !(await confirmar('Sair da partida?', 'Sair'))) return; sairDoJogo(); };
+// Esc fecha a camada que estiver aberta
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape' || $('#dialogo').classList.contains('on')) return;
+  if(Tutorial.ativo){ Tutorial.fim(); return; }
+  if($('#historico').classList.contains('on')){ Mesa.fecharHistorico(); return; }
+  if($('#escolha-cor').classList.contains('on')) $('#escolha-cor').classList.remove('on');
+  else if($('#painel').classList.contains('on')) Mesa.fecharPainel();
+});
 function sairDoJogo(){
+  if(Tutorial.ativo) Tutorial.esconder();
+  Mesa.fecharHistorico();
   if(sessao){ sessao.encerrar(); sessao = null; }
   Mesa.fecharPainel(); $('#contest').classList.remove('on'); $('#vitoria').classList.remove('on'); pararConfete();
   ir('tela-menu');
@@ -1966,21 +2229,262 @@ $$('#tela-solo [data-passo]').forEach(b => b.onclick = () => { soloBots = Math.m
 const soloModo = segmento('solo-modo', v => { $('#solo-modo-ajuda').textContent = v === 'gramatica' ? 'Cartas de pergunta e resposta, com a Relâmpago.' : 'O UNO de sempre, com números no lugar das perguntas.'; });
 const soloNivel = segmento('solo-nivel');
 const soloRitmo = segmento('solo-ritmo');
+soloModo.definir(Pref.ler('soloModo', 'gramatica'));
+soloNivel.definir(Pref.ler('soloNivel', 'normal'));
+soloRitmo.definir(Pref.ler('soloRitmo', '1'));
 function embaralharNomes(){ const a = NOMES_ROBOS.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
-$('#btn-comecar-solo').onclick = () => {
+function iniciarSolo(opts){
+  opts = opts || {};
   Som.iniciar(); Som.tocar('clique');
   const nome = ($('#solo-nome').value.trim() || 'Você').slice(0, 14);
   Pref.gravar('nome', $('#solo-nome').value.trim()); Pref.gravar('soloBots', soloBots);
+  Pref.gravar('soloModo', soloModo()); Pref.gravar('soloNivel', soloNivel()); Pref.gravar('soloRitmo', soloRitmo());
+  const modo = opts.modo || soloModo();
   const nomes = embaralharNomes();
   const jogadores = [{ nome, bot:false }].concat(Array.from({length:soloBots}, (_, i) => ({ nome:nomes[i], bot:true, nivel:soloNivel() })));
   const ritmo = TESTE ? 0.45 : parseFloat(soloRitmo());
-  const cfg = { modo:soloModo(), jogadores, ritmo, tempoContestacao: TESTE ? 1500 : 6000 };
+  const cfg = { modo, jogadores, ritmo, tempoContestacao: TESTE ? 1500 : 6000 };
   if(sessao) sessao.encerrar();
   Mesa.preparar(null);
   ir('tela-jogo');
   sessao = new SessaoLocal(cfg);
   Mesa.sessao = sessao;
+  if(!TESTE && (opts.tutorial || !Pref.ler('tutorialVisto', false))){
+    // segura os robôs desde já e abre o tutorial depois da distribuição das cartas
+    const s = sessao; s.pausar('tuto');
+    setTimeout(() => { if(sessao === s) Tutorial.iniciar(modo); }, 1000);
+  }
+}
+$('#btn-comecar-solo').onclick = () => iniciarSolo();
+$('#btn-tutorial').onclick = () => { Dicas.zerar(); iniciarSolo({ tutorial:true, modo:'gramatica' }); };
+
+/* =================================================================
+   TUTORIAL (passo a passo na primeira partida) e DICAS (uma vez cada)
+   ================================================================= */
+const Tutorial = {
+  ativo:false, passos:[], i:0,
+  iniciar(modo){
+    const s = sessao;
+    if(!(s instanceof SessaoLocal) || s instanceof SessaoAnfitriao) return;
+    this.passos = [
+      { alvo:'#descarte', txt:'Esta é a <b>carta da mesa</b>. Na sua vez, jogue uma carta com a mesma <b>cor</b>, o mesmo <b>número</b> ou o mesmo <b>símbolo</b>. Toque nela para ler.' },
+      { alvo:'.zona-mao', txt:'Esta é a <b>sua mão</b>. Na sua vez, as cartas que servem sobem e brilham. Toque numa carta para ler e jogar.' +
+        (modo === 'gramatica' ? ' Na mão aparece o <b>tema</b> da carta: <b>P</b> é pergunta, <b>R</b> é resposta.' : '') },
+      { alvo:'#monte', txt:'Nenhuma serve? Toque no <b>monte</b> para comprar. Se a carta comprada também não servir, passe a vez.' },
+      modo === 'gramatica' && { alvo:'#descarte', txt:'⚡ <b>Relâmpago</b>: se a mesa for uma pergunta ou resposta e você tiver o par dela, jogue a qualquer hora, <b>até fora da sua vez</b>! O par tem sempre o <b>mesmo número</b>.' },
+      { alvo:'.barra-acoes', txt:'Quando ficar com <b>2 cartas</b>, aperte <b>UNO!</b> antes de jogar a penúltima. Se esquecer, os robôs te pegam e você compra 2.' },
+      { alvo:'#assentos', txt:'Esses são os <b>robôs</b>. Quem está na vez brilha em amarelo. Boa partida!' }
+    ].filter(Boolean);
+    this.i = 0; this.ativo = true;
+    s.pausar('tuto');
+    Mesa.fecharPainel();
+    $('#tuto').classList.add('on');
+    this.mostrar();
+  },
+  mostrar(){
+    const p = this.passos[this.i];
+    const el = document.querySelector(p.alvo), r = el && el.getBoundingClientRect();
+    const luz = $('#tuto-luz'), bal = $('#tuto-balao'), m = 8;
+    if(r && r.width){
+      Object.assign(luz.style, { left:(r.left - m) + 'px', top:(r.top - m) + 'px', width:(r.width + 2*m) + 'px', height:(r.height + 2*m) + 'px' });
+    }
+    $('#tuto-txt').innerHTML = p.txt;
+    $('#tuto-passo').textContent = (this.i + 1) + ' de ' + this.passos.length;
+    $('#tuto-prox').textContent = this.i === this.passos.length - 1 ? 'Jogar!' : 'Próximo';
+    // balão do lado com mais espaço
+    bal.style.top = ''; bal.style.bottom = '';
+    if(!r || r.top + r.height / 2 > innerHeight / 2) bal.style.bottom = (r ? innerHeight - r.top + 18 : innerHeight * .4) + 'px';
+    else bal.style.top = (r.bottom + 18) + 'px';
+    bal.classList.remove('entra'); void bal.offsetWidth; bal.classList.add('entra');
+    $('#tuto-prox').focus();
+  },
+  proximo(){ Som.tocar('clique'); this.i++; if(this.i >= this.passos.length) this.fim(); else this.mostrar(); },
+  esconder(){ this.ativo = false; $('#tuto').classList.remove('on'); },
+  fim(){
+    this.esconder();
+    Pref.gravar('tutorialVisto', true);
+    if(sessao && sessao.retomar) sessao.retomar('tuto');
+  }
 };
+$('#tuto-prox').onclick = () => Tutorial.proximo();
+$('#tuto-pular').onclick = () => { Som.tocar('clique'); Tutorial.fim(); };
+addEventListener('resize', () => { if(Tutorial.ativo) Tutorial.mostrar(); });
+
+const Dicas = {
+  vistas: Pref.ler('dicas', {}),
+  zerar(){ this.vistas = {}; Pref.gravar('dicas', {}); },
+  uma(k, msg){ if(this.vistas[k]) return; this.vistas[k] = true; Pref.gravar('dicas', this.vistas); aviso(msg, 'ouro', 4500); },
+  checar(v){
+    if(v.fase !== 'jogar') return;
+    // não entrega o par: só aponta cartas com o mesmo número, como diz a regra
+    if(v.modo === 'gramatica' && ehPerguntaResposta(v.topo) && v.mao.some(c => ehPerguntaResposta(c) && c.numero === v.topo.numero))
+      this.uma('relampago', '⚡ Você tem carta com o número ' + v.topo.numero + ' — pode ser o par! Toque nela, leia e use Relâmpago.');
+    if(v.vez === v.eu && v.mao.length === 2 && !v.gritou)
+      this.uma('uno', 'Duas cartas! Aperte UNO! antes de jogar a próxima.');
+  }
+};
+
+/* =================================================================
+   ESTATÍSTICAS (guardadas no aparelho)
+   ================================================================= */
+function mesclar(base, salvo){
+  if(!salvo || typeof salvo !== 'object') return base;
+  Object.keys(base).forEach(k => {
+    if(base[k] && typeof base[k] === 'object') base[k] = mesclar(base[k], salvo[k]);
+    else if(typeof salvo[k] === 'number') base[k] = salvo[k];
+  });
+  return base;
+}
+const Stats = {
+  base(){
+    const pv = () => ({ p:0, v:0 });
+    return { partidas:0, vitorias:0, seq:0, melhorSeq:0, jogadas:0,
+      modo:{ gramatica:pv(), classico:pv() }, nivel:{ facil:pv(), normal:pv(), dificil:pv() }, online:pv(),
+      relValeu:0, relDerrubada:0, contAcertou:0, contErrou:0, unoGritado:0, pegou:0, pego:0 };
+  },
+  d:null,
+  carregar(){ this.d = mesclar(this.base(), Pref.ler('stats', null)); },
+  salvar(){ Pref.gravar('stats', this.d); },
+  registrar(novos, v, s){
+    if(v.eu == null) return;
+    const d = this.d, eu = v.eu, antes = JSON.stringify(d);
+    novos.forEach(ev => {
+      switch(ev.tipo){
+        case 'jogou': case 'relampago': if(ev.j === eu) d.jogadas++; break;
+        case 'semContestacao': if(ev.j === eu) d.relValeu++; break;
+        case 'contestou':
+          if(ev.autor === eu){ if(ev.acusadorCerto) d.relDerrubada++; else d.relValeu++; }
+          if(ev.j === eu){ if(ev.acusadorCerto) d.contAcertou++; else d.contErrou++; }
+          break;
+        case 'uno': if(ev.j === eu) d.unoGritado++; break;
+        case 'pegou': if(ev.j === eu) d.pegou++; if(ev.alvo === eu) d.pego++; break;
+        case 'vitoria': {
+          const venci = ev.j === eu ? 1 : 0;
+          d.partidas++; d.vitorias += venci;
+          d.seq = venci ? d.seq + 1 : 0; d.melhorSeq = Math.max(d.melhorSeq, d.seq);
+          d.modo[v.modo].p++; d.modo[v.modo].v += venci;
+          const solo = s instanceof SessaoLocal && !(s instanceof SessaoAnfitriao);
+          if(solo){
+            const bot = s.cfg.jogadores.find(j => j.bot), n = bot && d.nivel[bot.nivel];
+            if(n){ n.p++; n.v += venci; }
+          } else { d.online.p++; d.online.v += venci; }
+          break;
+        }
+      }
+    });
+    if(JSON.stringify(d) !== antes) this.salvar();
+  },
+  zerar(){ this.d = this.base(); this.salvar(); }
+};
+Stats.carregar();
+
+function pct(v, p){ return p ? Math.round(100 * v / p) + '%' : '—'; }
+function desenharStats(){
+  const d = Stats.d;
+  const caixa = (n, rot) => '<div class="num-box"><b>' + n + '</b><span>' + rot + '</span></div>';
+  const linha = (rot, val) => '<div class="linha-stat"><span>' + rot + '</span><b>' + val + '</b></div>';
+  const vp = o => o.p ? o.v + ' de ' + o.p + ' (' + pct(o.v, o.p) + ')' : '—';
+  const bloco = (titulo, linhas) => '<div class="bloco"><h3>' + titulo + '</h3>' + linhas.join('') + '</div>';
+  $('#stats-conteudo').innerHTML =
+    (d.partidas ? '' : '<p class="texto">Jogue uma partida até o fim para começar a contar.</p>') +
+    '<div class="blocos-num">' + caixa(d.partidas, d.partidas === 1 ? 'partida' : 'partidas') + caixa(d.vitorias, d.vitorias === 1 ? 'vitória' : 'vitórias') +
+      caixa(pct(d.vitorias, d.partidas), 'aproveitamento') + caixa(d.melhorSeq, 'melhor sequência') + '</div>' +
+    bloco('Vitórias por baralho', [linha('Gramática', vp(d.modo.gramatica)), linha('UNO clássico', vp(d.modo.classico))]) +
+    bloco('Contra robôs', [linha('Fácil', vp(d.nivel.facil)), linha('Normal', vp(d.nivel.normal)), linha('Difícil', vp(d.nivel.dificil))]) +
+    bloco('Online', [linha('Com amigos', vp(d.online))]) +
+    bloco('⚡ Relâmpago', [linha('Suas Relâmpagos que valeram', d.relValeu), linha('Suas Relâmpagos derrubadas', d.relDerrubada),
+      linha('Contestações certas', d.contAcertou), linha('Contestações erradas', d.contErrou)]) +
+    bloco('UNO!', [linha('Gritou UNO!', d.unoGritado), linha('Pegou alguém sem UNO', d.pegou), linha('Foi pego sem UNO', d.pego), linha('Cartas jogadas', d.jogadas)]) +
+    bloco('Estudo', [linha('Pares dominados', Estudo.dominados() + ' de ' + PARES.length), linha('Cartas estudadas', Estudo.d.vistas)]);
+}
+aoEntrar['tela-stats'] = desenharStats;
+$('#btn-zerar-stats').onclick = async () => {
+  if(!(await confirmar('Zerar todas as estatísticas das partidas?', 'Zerar'))) return;
+  Stats.zerar(); desenharStats(); aviso('Estatísticas zeradas');
+};
+
+/* =================================================================
+   ESTUDO — flashcards com repetição espaçada simples (caixas de Leitner)
+   ================================================================= */
+const Estudo = {
+  d: mesclar({ vistas:0 }, Pref.ler('estudoInfo', null)),
+  caixas: Pref.ler('estudo', {}),          // índice do par -> caixa 0..4 (3 ou mais = dominado)
+  tema:'todos', atual:null, virada:false, placar:{ ok:0, erro:0 },
+  caixa(i){ return this.caixas[i] || 0; },
+  lista(){ return PARES.map((p, i) => i).filter(i => this.tema === 'todos' || PARES[i].t === this.tema); },
+  dominados(l){ return (l || PARES.map((p, i) => i)).filter(i => this.caixa(i) >= 3).length; },
+  sortear(){
+    // cartas de caixa baixa (erradas ou novas) aparecem bem mais
+    const peso = [8, 5, 3, 2, 1], l = this.lista();
+    const cand = l.length > 1 ? l.filter(i => i !== this.atual) : l;
+    let r = Math.random() * cand.reduce((s, i) => s + peso[this.caixa(i)], 0);
+    for(const i of cand){ r -= peso[this.caixa(i)]; if(r <= 0) return i; }
+    return cand[cand.length - 1];
+  },
+  montarTemas(){
+    const box = $('#estudo-temas');
+    const temas = ['todos'].concat(Array.from(new Set(PARES.map(p => p.t))));
+    box.innerHTML = temas.map(t => '<button data-t="' + esc(t) + '" aria-pressed="' + (t === this.tema) + '"' + (t === this.tema ? ' class="on"' : '') + '>' + (t === 'todos' ? 'Todos' : esc(t)) + '</button>').join('');
+    box.onclick = e => {
+      const b = e.target.closest('button'); if(!b) return;
+      this.tema = b.dataset.t; Som.tocar('clique');
+      box.querySelectorAll('button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); });
+      this.proxima();
+    };
+  },
+  entrar(){ this.placar = { ok:0, erro:0 }; this.montarTemas(); this.proxima(); },
+  proxima(){
+    this.atual = this.sortear(); this.virada = false;
+    const p = PARES[this.atual], giro = $('#flash-giro');
+    giro.innerHTML = '';
+    giro.append(criarCarta({ id:'eq', cor:p.qc, tipo:'numero', numero:p.qn, texto:p.qt, papel:'pergunta', topico:p.t }, 'xg'));
+    const tras = criarCarta({ id:'er', cor:p.ac, tipo:'numero', numero:p.an, texto:p.at, papel:'resposta', topico:p.t }, 'xg');
+    tras.classList.add('tras'); giro.append(tras);
+    // volta para a frente sem animar o giro e entra deslizando
+    giro.style.transition = 'none'; $('#flash').classList.remove('virada'); void giro.offsetWidth; giro.style.transition = '';
+    giro.classList.remove('troca'); void giro.offsetWidth; giro.classList.add('troca');
+    $('#estudo-info').textContent = p.t + ' · pense na resposta e vire a carta';
+    $('#estudo-antes').style.display = ''; $('#estudo-depois').style.display = 'none';
+    this.atualizar();
+  },
+  virar(){
+    if(!this.virada){
+      this.virada = true; this.d.vistas++; Pref.gravar('estudoInfo', this.d);
+      $('#estudo-info').textContent = 'você acertou a resposta?';
+      $('#estudo-antes').style.display = 'none'; $('#estudo-depois').style.display = '';
+    }
+    Som.tocar('carta');
+    $('#flash').classList.toggle('virada');   // depois de virada, tocar alterna para reler a pergunta
+  },
+  responder(ok){
+    if(!this.virada) return;
+    const i = this.atual;
+    this.caixas[i] = ok ? Math.min(4, this.caixa(i) + 1) : 0;
+    Pref.gravar('estudo', this.caixas);
+    this.placar[ok ? 'ok' : 'erro']++;
+    Som.tocar(ok ? 'certo' : 'errado'); vibrar(ok ? 15 : [30, 30, 30]);
+    if(ok && this.caixa(i) === 3) aviso('Par dominado: ' + PARES[i].t + ' ' + PARES[i].qn + ' ✓', 'ouro', 2000);
+    this.proxima();
+  },
+  atualizar(){
+    const l = this.lista(), dom = this.dominados(l);
+    $('#estudo-prog').textContent = dom + ' de ' + l.length + (l.length === 1 ? ' par dominado' : ' pares dominados');
+    $('#estudo-placar').textContent = '✓ ' + this.placar.ok + '  ✗ ' + this.placar.erro;
+    $('#estudo-barra').style.width = (l.length ? dom / l.length * 100 : 0) + '%';
+  }
+};
+aoEntrar['tela-estudo'] = () => Estudo.entrar();
+$('#flash').onclick = () => Estudo.virar();
+$('#flash').onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); Estudo.virar(); } };
+$('#btn-virar').onclick = () => Estudo.virar();
+$('#btn-errei').onclick = () => Estudo.responder(false);
+$('#btn-acertei').onclick = () => Estudo.responder(true);
+
+// partida contra robôs pausa sozinha quando o app vai para segundo plano
+document.addEventListener('visibilitychange', () => {
+  if(!(sessao instanceof SessaoLocal) || sessao instanceof SessaoAnfitriao) return;
+  if(document.hidden) sessao.pausar('oculto'); else sessao.retomar('oculto');
+});
 
 /* =================================================================
    ONLINE (PeerJS)
@@ -2175,10 +2679,15 @@ segmento('sala-modo', v => { Sala.modo = v; Sala.atualizarLista(); });
 $('#btn-copiar').onclick = async () => { try{ await navigator.clipboard.writeText(Sala.codigo); aviso('Código copiado'); }catch(e){ aviso('Código: ' + Sala.codigo); } };
 $('#btn-compartilhar').onclick = async () => {
   const txt = 'Bora jogar UNO Gramática! Código da sala: ' + Sala.codigo;
-  if(navigator.share){ try{ await navigator.share({ title:'UNO Gramática', text:txt, url:location.href.split('?')[0] }); }catch(e){} }
-  else { try{ await navigator.clipboard.writeText(txt + ' ' + location.href.split('?')[0]); aviso('Convite copiado'); }catch(e){ aviso(txt); } }
+  // o link já leva o código: quem abrir cai direto na tela de entrar
+  const link = location.href.split(/[?#]/)[0] + '?sala=' + Sala.codigo;
+  if(navigator.share){ try{ await navigator.share({ title:'UNO Gramática', text:txt, url:link }); }catch(e){} }
+  else { try{ await navigator.clipboard.writeText(txt + ' ' + link); aviso('Convite copiado'); }catch(e){ aviso(txt); } }
 };
-if(params.get('sala')){ $('#online-codigo').value = params.get('sala').toUpperCase().slice(0,5); }
+if(params.get('sala')){
+  $('#online-codigo').value = params.get('sala').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,5);
+  ir('tela-online');
+}
 
 /* =================================================================
    REGRAS e CARTAS FÍSICAS

@@ -1,36 +1,28 @@
 {
+  "id": "./",
   "name": "UNO Gramática",
   "short_name": "UNO Gramática",
-  "description": "O UNO da aula de português — contra robôs ou online com amigos. Criado por Francisco Audir.",
+  "description": "O UNO da aula de português: joga normal quem não sabe, e quem sabe gramática solta Relâmpagos e dispara na frente. Contra robôs ou online com os amigos. Criado por Francisco Audir.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#0f2923",
   "theme_color": "#0f2923",
   "lang": "pt-BR",
-  "categories": [
-    "games",
-    "education"
-  ],
+  "dir": "ltr",
+  "categories": ["games", "education"],
   "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icons/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Jogar contra robôs", "url": "./?ir=solo", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Jogar online", "url": "./?ir=online", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Como jogar", "url": "./?ir=video", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }
